@@ -1,0 +1,27 @@
+{
+  "Comments": {
+    "Scenario2: High-intensity infiltration into dry sand. Tests sharp front resolution.": 0.02
+  },
+  "soil_properties": {
+    "theta_r": 0.045,
+    "theta_s": 0.43,
+    "alpha": 0.145,
+    "n": 2.68,
+    "Ks": 29.7
+  },
+  "grid_setup": {
+    "total_depth": 100.0,
+    "node_spacing": 0.5
+  },
+  "conditions": {
+    "top_flux": 15.0,
+    "bottom_head": -200.0,
+    "initial_head": -500.0
+  },
+  "solver_settings": {
+    "max_time": 2.0,
+    "initial_dt": 0.00001,
+    "max_dt": 0.05,
+    "averaging_mode": "all"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "Comments": {
+    "Scenario3 features evaporation from a wet clay profile.": 0.03
+  },
+  "soil_properties": {
+    "theta_r": 0.068,
+    "theta_s": 0.38,
+    "alpha": 0.008,
+    "n": 1.09,
+    "Ks": 0.2
+  },
+  "grid_setup": {
+    "total_depth": 100.0,
+    "node_spacing": 1.0
+  },
+  "conditions": {
+    "top_flux": -0.05,
+    "bottom_head": -200.0,
+    "initial_head": -20.0
+  },
+  "solver_settings": {
+    "max_time": 24.0,
+    "initial_dt": 0.001,
+    "averaging_mode": "all"
+  }
+}

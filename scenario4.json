@@ -1,0 +1,26 @@
+{
+  "Comments": {
+    "Scenario4 features a bottom-up capillary rise shock into dry loamy sand.": 0.04
+  },
+  "soil_properties": {
+    "theta_r": 0.057,
+    "theta_s": 0.41,
+    "alpha": 0.124,
+    "n": 2.28,
+    "Ks": 14.6
+  },
+  "grid_setup": {
+    "total_depth": 100.0,
+    "node_spacing": 0.5
+  },
+  "conditions": {
+    "top_flux": 0.0,
+    "bottom_head": 0.0,
+    "initial_head": -800.0
+  },
+  "solver_settings": {
+    "max_time": 24.0,
+    "initial_dt": 0.00001,
+    "averaging_mode": "all"
+  }
+}
