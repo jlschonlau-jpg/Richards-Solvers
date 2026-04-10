@@ -24,12 +24,11 @@ Where:
 ### Project Structure
 
     Richards-Solvers/
-    ├── 1D_Solver/
-    │   ├── richards_solver.py      # Core numerical engine and iteration logic
-    │   ├── params.json             # Simulation configuration (Soil, Grid, BCs)
-    │   ├── requirements.txt        # Dependencies (NumPy, SciPy, Matplotlib)
-    │   └── simulation_report.txt   # Auto-generated performance & mass balance log
-    └── 2D_Solver/                  # Extended implementation for 2D flow fields
+    ├─1D_Solver/
+    ├── richards_solver.py      # Core numerical engine and iteration logic
+    ├── params.json             # Simulation configuration (Soil, Grid, BCs)
+    ├── requirements.txt        # Dependencies (NumPy, SciPy, Matplotlib)
+    └── simulation_report.txt   # Auto-generated performance & mass balance log
 
 ---
 
