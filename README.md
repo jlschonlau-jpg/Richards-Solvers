@@ -1,123 +1,89 @@
-1D Richards Equation Solver (Python)
-Author: Jacob Schonlau
-Institution: Brigham Young University (Research)
-Date: April 2026
+## 1D Richards Equation Solver (Python)
 
-Overview
---------
-This repository contains a 1D numerical solver for
-the mixed-head form of the Richards Equation. It is designed to simulate
-unsaturated water flow through various soil textures.
+**Author:** Jacob Schonlau  
+**Institution:** Brigham Young University (Research)  
+**Date:** April 2026
 
-The solver handles the highly non-linear Van Genuchten soil functions using
-adaptive time-stepping and Picard iteration.
+### Overview
+This module provides a numerical engine for the **mixed-head form** of the Richards Equation. It simulates unsaturated water flow across various soil textures by solving the highly non-linear Van Genuchten constitutive relationships. 
 
-Governing Equation:
-    C(h) * ∂h/∂t = ∂/∂z [ K(h) * ( ∂h/∂z - 1 ) ]
+The solver utilizes **Picard Iteration** with **adaptive time-stepping** to maintain stability during extreme events, such as surface evaporation from wet clay or rapid infiltration into dry sand.
 
-Project Structure
------------------
-richards_solver.py       -Core execution script and numerical engine.
-params.json               -Configuration file for soil physics, grid setup,
-                           solver settings, and boundary conditions.
-requirements.txt          -Minimal dependencies (NumPy, SciPy, Matplotlib).
-simulation_report.txt     -Auto-generated performance log summarizing runtime,
-                           iteration counts, and Mass Balance Error (MBE).
+#### Governing Equation
+The solver addresses the vertical moisture movement defined by:
 
+C(h) * ∂h/∂t = ∂/∂z [ K(h) * ( ∂h/∂z - 1 ) ]
 
-Getting Started
----------------
-1. Install Dependencies
-       pip install -r requirements.txt
+Where:
+* **h**: Pressure head
+* **C(h)**: Specific moisture capacity (dθ/dh)
+* **K(h)**: Hydraulic conductivity
 
-2. Running a Simulation
-       python richards_solver.py --config params.json
+---
 
+### Project Structure
 
-Configuration Guide (params.json)
----------------------------------
-The simulation is controlled entirely through the JSON configuration file.
+    Richards-Solvers/
+    ├── 1D_Solver/
+    │   ├── richards_solver.py      # Core numerical engine and iteration logic
+    │   ├── params.json             # Simulation configuration (Soil, Grid, BCs)
+    │   ├── requirements.txt        # Dependencies (NumPy, SciPy, Matplotlib)
+    │   └── simulation_report.txt   # Auto-generated performance & mass balance log
+    └── 2D_Solver/                  # Extended implementation for 2D flow fields
 
-Soil Physics:
-    Uses the Van Genuchten model.
-    Provide: alpha, n, theta_r, theta_s, Ks.
+---
 
-Grid Setup:
-    total_depth     Column length (cm)
-    node_spacing    Vertical discretization (dz)
+### Getting Started
 
-Solver Settings:
-    averaging_mode  "arithmetic", "geometric", "harmonic", or "upwind"
-                    "all" → runs all four modes sequentially and compares
-                    their performance in a single plot.
-                    (Note in simple cases these will be so close you may not see the difference)
+#### 1. Install Dependencies
+Ensure you have Python 3.8+ installed.
 
-                    Upwind is usually the most stable of all of these.
+    pip install -r requirements.txt
 
-    initial_dt      Starting time step.
-                    Note: Time units are determined by the flux and Ks rates
-                    (e.g., if Ks is cm/hr, max_time is in hours)
+#### 2. Run a Simulation
 
+    python richards_solver.py --config params.json
 
-Numerical Details
------------------
-Spatial Discretization:
-    Central finite difference on a staggered grid.
-    z is defined as positive downwards (depth).
+---
 
-Temporal Discretization:
-    Fully implicit (Backward Euler).
+### Configuration Guide (`params.json`)
 
-Linear Algebra:
-    O(N) tridiagonal matrix inversion using scipy.linalg.solve_banded.
+The simulation behavior is entirely decoupled from the source code, controlled via the JSON configuration file. If you don't use --config, the program will by default use "params.json". If you do, you can specify any scenario.
 
-Adaptive Time-Stepping:
-    Automatically scales dt based on Picard iteration counts to maintain
-    stability during sharp wetting fronts.
+| Category | Parameter | Description |
+| :--- | :--- | :--- |
+| **Soil Properties** | `alpha`, `n` | Van Genuchten shape parameters. |
+| | `theta_r`, `theta_s` | Residual and Saturated volumetric water content. |
+| | `Ks` | Saturated hydraulic conductivity. |
+| **Grid Setup** | `total_depth` | Total column length (e.g., cm). |
+| | `node_spacing` | Vertical discretization (dz). |
+| **Solver Settings**| `averaging_mode` | `arithmetic`, `geometric`, `harmonic`, `upwind`, or `all`. |
+| | `initial_dt` | Starting time step (automatically adjusted during run). |
+| | `max_time` | Total simulation duration. |
 
-Boundary Conditions:
-    Top:    Neumann (constant flux / rainfall)
-    Bottom: Dirichlet (constant pressure / water table)
+> **Note on Averages:** The flux is calculated in between each node, which requires the hydraulic conductivity (Ks). This must me some kind of average between the Ks value of each node. I implimented four different possible averaging modes, with the additional setting "all" which runs them all. `upwind` is generally the most stable averaging mode, but it is case dependent. I don't understand the nuance of when different modes might be better so I coded them all.
+---
 
+### Numerical Implementation
 
-Analyzing Results
------------------
-Upon completion, the solver generates a Matplotlib plot showing the final
-moisture profile (theta).
+* **Spatial Discretization:** Central finite difference on a staggered grid. Depth (z) is defined as positive downwards.
+* **Temporal Discretization:** Fully implicit (Backward Euler) to ensure stability at larger time steps.
+* **Linear Algebra:** Employs an O(N) tridiagonal matrix inversion using `scipy.linalg.solve_banded`.
+* **Adaptive Time-Stepping:** The solver monitors Picard convergence. It "chops" dt upon failure and expands dt when convergence is rapid (≤ 5 iterations).
 
-Technical Audit:
-    Check simulation_report.txt after each run.
-    A successful simulation should have a Mass Balance Error (MBE)
-    near zero (< 1e-7 cm).
+---
 
-If the MBE is high or the solver crashes:
-    • Reduce node_spacing
-    • Reduce initial_dt
+### Analyzing Results
 
-The visualization engine employs Auto-Zooming Axes. Rather than using static bounds,
-the plot window wraps tightly around the current theta values. This ensures that even the most subtle
-capillary wicking or evaporation-driven drying is visible to the researcher,
-even when those changes occur at the 4th or 5th decimal place.
+#### Visualization
+The solver generates a profile plot of θ (Volumetric Water Content) vs. Depth. The axes utilize **Auto-Zooming**, wrapping tightly around current values to reveal subtle capillary wicking or evaporation-driven drying that might otherwise be missed.
 
+#### Technical Audit
+After every run, check `simulation_report.txt`. 
+* **Success Criteria:** A robust simulation should maintain a **Mass Balance Error (MBE)** near zero (< 1e-7 cm). 
+* **Troubleshooting:** If the MBE is high or the solver fails, decrease `node_spacing` or the `initial_dt` in the config file.
 
-Handover & Maintenance Notes
-----------------------------
-This codebase was designed to be modular for future researchers.
+---
 
-To Add New Soil Models:
-    Extend the VanGenuchtenSoil class.
-
-To Add Sink Terms:
-    Modify the residual calculation in perform_timestep to include
-    root water uptake or evaporation.
-
-Stability Notes:
-    The solver is optimized for sandy loam.
-    For heavy clay scenarios, use a very small initial_dt (≈ 1e-5)
-    to handle steep suction gradients.
-
-Note:
-    This solver was developed with collaborative AI assistance to ensure
-    code readability and robust error handling. Users should verify
-    research outputs against analytical or benchmark solutions.
-  
+### Citation & Acknowledgements
+This solver was developed at **Brigham Young University** with collaborative AI assistance to ensure code readability and robust numerical handling. This program has NOT been verified against benchmark solutions (e.g., HYDRUS-1D) 
