@@ -15,7 +15,7 @@ Where:
 * **C(h)**: Specific moisture capacity (dθ/dh)
 * **K(h)**: Hydraulic conductivity
 
-### Getting Started
+### Running Code
 
     python richards_solver.py --config params.json
 
