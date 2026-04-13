@@ -1,16 +1,12 @@
 ## 1D Richards Equation Solver (Python)
 
-**Author:** Jacob Schonlau  
-**Institution:** Brigham Young University (Research)  
-**Date:** April 2026
-
 ### Overview
-This module provides a numerical engine for the **mixed-head form** of the Richards Equation. It simulates unsaturated water flow across various soil textures by solving the highly non-linear Van Genuchten constitutive relationships. 
+This solver provides a numerical engine for the **mixed-head form** of the Richards Equation.
 
-The solver utilizes **Picard Iteration** with **adaptive time-stepping** to maintain stability during extreme events, such as surface evaporation from wet clay or rapid infiltration into dry sand.
+The solver uses **Picard Iteration** and **adaptive time-stepping** to maintain stability during extreme events (like surface evaporation from wet clay or rapid infiltration into dry sand)
 
 #### Governing Equation
-The solver addresses the vertical moisture movement defined by:
+The solver works with the vertical moisture movement defined by:
 
 C(h) * ∂h/∂t = ∂/∂z [ K(h) * ( ∂h/∂z - 1 ) ]
 
@@ -19,35 +15,13 @@ Where:
 * **C(h)**: Specific moisture capacity (dθ/dh)
 * **K(h)**: Hydraulic conductivity
 
----
-
-### Project Structure
-
-    Richards-Solvers/
-    ├─1D_Solver/
-    ├── richards_solver.py      # Core numerical engine and iteration logic
-    ├── params.json             # Simulation configuration (Soil, Grid, BCs)
-    ├── requirements.txt        # Dependencies (NumPy, SciPy, Matplotlib)
-    └── simulation_report.txt   # Auto-generated performance & mass balance log
-
----
-
 ### Getting Started
-
-#### 1. Install Dependencies
-Ensure you have Python 3.8+ installed.
-
-    pip install -r requirements.txt
-
-#### 2. Run a Simulation
 
     python richards_solver.py --config params.json
 
----
-
 ### Configuration Guide (`params.json`)
 
-The simulation behavior is entirely decoupled from the source code, controlled via the JSON configuration file. If you don't use --config, the program will by default use "params.json". If you do, you can specify any scenario.
+The simulation parameters isn't in the "richards_solver.py", it is controlled via the JSON configuration file. If you don't use --config, the program will by default use "params.json". If you do, you can specify any scenario.
 
 | Category | Parameter | Description |
 | :--- | :--- | :--- |
@@ -60,7 +34,7 @@ The simulation behavior is entirely decoupled from the source code, controlled v
 | | `initial_dt` | Starting time step (automatically adjusted during run). |
 | | `max_time` | Total simulation duration. |
 
-> **Note on Averages:** The flux is calculated in between each node, which requires the hydraulic conductivity (Ks). This must me some kind of average between the Ks value of each node. I implimented four different possible averaging modes, with the additional setting "all" which runs them all. `upwind` is generally the most stable averaging mode, but it is case dependent. I don't understand the nuance of when different modes might be better so I coded them all.
+> **Note on Averages:** The flux is calculated in between each node, which requires the hydraulic conductivity (Ks). This must me some kind of average between the Ks value of each node. I implimented four different possible averaging modes, with the additional setting "all" which runs them all. `upwind` is generally the most stable averaging mode, but not always. I don't understand the nuance of when different modes might be better so I coded them all.
 ---
 
 ### Numerical Implementation
@@ -85,4 +59,4 @@ After every run, check `simulation_report.txt`.
 ---
 
 ### Citation & Acknowledgements
-This solver was developed at **Brigham Young University** with collaborative AI assistance to ensure code readability and robust numerical handling. This program has NOT been verified against benchmark solutions (e.g., HYDRUS-1D) 
+This solver was developed at **Brigham Young University** with collaborative AI assistance. This program has NOT been verified against benchmark solutions (e.g., HYDRUS-1D) 
